@@ -1,11 +1,12 @@
 import React, { useState } from 'react';
-import { useDispatch } from 'react-redux';
 import { addOrder } from '../redux/actions';
 import '../styles/NewOrder.css';
 import { toast,ToastContainer } from 'react-toastify';
 import "react-toastify/dist/ReactToastify.css";
 import { useNavigate } from 'react-router-dom';
 import uuid from "react-uuid";
+import { Order } from '../redux/types';
+import { useAppDispatch } from '../redux/store';
 
   const NewOrderPage: React.FC = () => {
   const navigate = useNavigate();
@@ -15,41 +16,45 @@ import uuid from "react-uuid";
   const [lastName, setLastName] = useState('');
   const [description, setDescription] = useState('');
   const [quantity, setQuantity] = useState('');
-  const dispatch = useDispatch();
+  const dispatch = useAppDispatch();
   
   const handleSubmit = () => {
   let numquantity=parseInt(quantity);
-    
+  let bStatus:boolean=true;
+   
       if(!lastName)
       {
           toast.error('Last Name is required!');
-          
-          return;
+          bStatus=false;         
       }
       if(!description)
       {
           toast.error('Description is required!');
-          return;
+          bStatus=false;
       }          
       if(isNaN(numquantity))
       {
           toast.error('Quantity is required!');
-          return;
+          bStatus=false;
       }
       if(numquantity<1 || numquantity>20)
       {
           toast.error('Quantity must be a number between 1 and 20');
-          return;
+          bStatus=false;
       }
   
-    dispatch(addOrder({
-      id,
-      firstName,
-      lastName,
-      description,
-      quantity: parseInt(quantity),
-    }));
+      if(!bStatus)
+        return;
 
+      const newOrder: Order = {
+          id: id,
+          firstName: firstName,
+          lastName: lastName,
+          description: description,
+          quantity: parseInt(quantity),
+        };
+        dispatch(addOrder(newOrder));
+    
     setId('');
     setFirstName('');
     setLastName('');
@@ -73,7 +78,7 @@ import uuid from "react-uuid";
         />
       </div>
       <div className="form-group">
-        <label htmlFor="lastName">Last Name:</label>
+        <label htmlFor="lastName">Last Name *:</label>
         <input
           id="lastName"
           type="text"
@@ -83,7 +88,7 @@ import uuid from "react-uuid";
         />
       </div>
       <div className="form-group">
-        <label htmlFor="orderDescription">Order Description:</label>
+        <label htmlFor="orderDescription">Order Description *:</label>
         <input
           id="orderDescription"
           type="text"
@@ -93,13 +98,12 @@ import uuid from "react-uuid";
         />
       </div>
       <div className="form-group">
-        <label htmlFor="quantity">Quantity:</label>
+        <label htmlFor="quantity">Quantity *:</label>
         <input
           id="quantity"
           type="number"
           value={quantity}
           minLength={1}
-          maxLength={20}
           onChange={e => setQuantity(e.target.value)}
         />
       </div>

@@ -1,6 +1,16 @@
+export interface OrderState{
+  orders:Order[];
+  loading:boolean;
+  error:string | null;
+}
+
 export enum ActionTypes {
-  ADD_ORDER = 'ADD_ORDER',
-  REMOVE_ORDER = 'REMOVE_ORDER',
+  FETCH_ORDER_REQUEST = 'FETCH_ORDER_REQUEST',
+  FETCH_ORDER_SUCCESS = 'FETCH_ORDER_SUCCESS',
+  ADD_ORDER_REQUEST = 'ADD_ORDER_REQUEST',
+  ADD_ORDER_SUCCESS = 'ADD_ORDER_SUCCESS',
+  DELETE_ORDER_REQUEST = 'DELETE_ORDER_REQUEST',
+  DELETE_ORDER_SUCCESS = 'DELETE_ORDER_SUCCESS', 
 }
 
 export interface Order {
@@ -10,15 +20,3 @@ export interface Order {
   description: string;
   quantity: number;
 }
-
-export interface AddOrderAction {
-  type: ActionTypes.ADD_ORDER;
-  payload: Order;
-}
-
-export interface RemoveOrderAction {
-  type: ActionTypes.REMOVE_ORDER;
-  payload: string;
-}
-
-export type ActionType = AddOrderAction | RemoveOrderAction;

@@ -1,17 +1,23 @@
-import React from 'react';
-import { useSelector, useDispatch } from 'react-redux';
-import { RootState } from '../redux/store';
+import React, { useEffect }  from 'react';
+import { useSelector } from 'react-redux';
+import { RootState,useAppDispatch } from '../redux/store';
 import { removeOrder } from '../redux/actions';
 import '../styles/Landingpage.css';
+import { getOrders } from '../redux/actions';
 
 const LandingPage: React.FC = () => {
-  const orders = useSelector((state: RootState) => state.order.orders);
-  const dispatch = useDispatch();
 
+  const orders = useSelector((state: RootState) => state.order.orders);
+  const dispatch = useAppDispatch();
+
+  useEffect(() => {
+    dispatch(getOrders());
+  }, [dispatch]);
+  
   const handleRemoveOrder = (id?: string) => {
     dispatch(removeOrder(id!));
   };
-
+  
   return (
     <>
       <h1>List of Ordered Items</h1>

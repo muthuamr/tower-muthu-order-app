@@ -1,28 +1,66 @@
-import { Order } from './types';
+import { Dispatch } from 'redux';
+import { Order,ActionTypes } from './types';
+import axios from 'axios';
 
-export enum ActionTypes {
-  ADD_ORDER = 'ADD_ORDER',
-  REMOVE_ORDER = 'REMOVE_ORDER',
-}
+export const addOrderRequest = () => ({
+  type: ActionTypes.ADD_ORDER_REQUEST,
+});
 
-export interface AddOrderAction {
-  type: ActionTypes.ADD_ORDER;
-  payload: Order;
-}
-
-export interface RemoveOrderAction {
-  type: ActionTypes.REMOVE_ORDER;
-  payload: string;
-}
-
-export type Action = AddOrderAction | RemoveOrderAction;
-
-export const addOrder = (order: Order) => ({
-  type: ActionTypes.ADD_ORDER,
+export const addOrderSuccess = (order: Order) => ({
+  type: ActionTypes.ADD_ORDER_SUCCESS,
   payload: order,
 });
 
-export const removeOrder = (id: string) => ({
-  type: ActionTypes.REMOVE_ORDER,
-  payload: id,
+export const deleteOrderRequest = () => ({
+  type: ActionTypes.DELETE_ORDER_REQUEST,
 });
+
+export const deleteOrderSuccess = (orderId: string) => ({
+  type: ActionTypes.DELETE_ORDER_SUCCESS,
+  payload: orderId,
+});
+
+export const getOrderRequest=()=>({
+  type:ActionTypes.FETCH_ORDER_REQUEST,
+});
+
+export const getOrderSuccess=(orders: Order[])=>({
+  type:ActionTypes.FETCH_ORDER_SUCCESS,
+  payload:orders,
+});
+
+export const getOrders = () => {
+  return async (dispatch: Dispatch) => {
+    dispatch(getOrderRequest());
+    try {
+      const response = await axios.get('https://653bc6c9d5d6790f5ec76c17.mockapi.io/orders');
+      dispatch(getOrderSuccess(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const addOrder = (order: Order) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(addOrderRequest());
+    try {
+      const response = await axios.post('https://653bc6c9d5d6790f5ec76c17.mockapi.io/orders', order); 
+      dispatch(addOrderSuccess(response.data));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
+
+export const removeOrder = (orderId: string) => {
+  return async (dispatch: Dispatch) => {
+    dispatch(deleteOrderRequest());
+    try {
+      await axios.delete(`https://653bc6c9d5d6790f5ec76c17.mockapi.io/orders/${orderId}`);
+      dispatch(deleteOrderSuccess(orderId));
+    } catch (error) {
+      console.log(error);
+    }
+  };
+};
